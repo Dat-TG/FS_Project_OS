@@ -145,7 +145,7 @@ void SHA256Final(SHA256_CTX* ctx, uchar hash[])
 	}
 }
 
-string SHA256(char* data) {
+string SHA256(const char* data) {
 	int strLen = strlen(data);
 	SHA256_CTX ctx;
 	unsigned char hash[32];

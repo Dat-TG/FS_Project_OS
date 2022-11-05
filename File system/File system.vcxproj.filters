@@ -21,9 +21,33 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Volume.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Entry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EntryTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="File.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SHA256.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Volume.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Entry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EntryTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="File.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
