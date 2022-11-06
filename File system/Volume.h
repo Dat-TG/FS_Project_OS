@@ -15,6 +15,7 @@ public:
 	uint32_t getBeginSectorOfEntryTable();
 	string getPassword();
 	string getPath();
+	string getSignature();
 	//Setter
 	void setNumberOfEntry(uint16_t value);
 	void setBeginSectorOfEntryTable(uint32_t value);
@@ -22,4 +23,5 @@ public:
 	bool create(); // Tạo volume
 	void setPath(string path);
 	bool read(); // Đọc thông tin volume
+	bool write(); //Ghi sửa thông tin volume
 };

@@ -1,5 +1,0 @@
-F:/MyFS.Dat
-F:/MyFSS.Dat
-F:/FS/hehe.dat
-C:/Users/PC/Documents/MyFS.Dat
-dd

@@ -25,6 +25,9 @@ string Volume::getPassword() {
 string Volume::getPath() {
 	return this->Path;
 }
+string Volume::getSignature() {
+	return this->Signature;
+}
 void Volume::setNumberOfEntry(uint16_t value) {
 	this->NumberOfEntry = value;
 }
@@ -58,6 +61,10 @@ bool Volume::create() {
 		return false;
 	}
 	fstream file(this->Path, ios_base::out | ios_base::binary);
+	if (!file) {
+		cout << "Something went wrong! Please check the path again!" << endl;
+		return false;
+	}
 	if (file.is_open()) {
 		file.clear();
 		//Write
@@ -75,14 +82,27 @@ bool Volume::create() {
 }
 
 bool Volume::read() {
-	fstream file(this->Path, ios_base::out | ios_base::binary);
+	fstream file(this->Path, ios_base::in | ios_base::binary);
 	if (file.is_open()) {
-		file.clear();
 		//Read
 		file.read(&this->Signature[0], 3);
 		file.read((char*)&this->NumberOfEntry, 2);
 		file.read((char*)&this->BeginSectorOfEntryTable, 4);
 		file.read(&this->Password[0], 64);
+		file.close();
+		return true;
+	}
+	return false;
+}
+
+bool Volume::write() {
+	fstream file(this->Path, ios_base::binary|ios::out|ios::in);
+	if (file.is_open()) {
+		file.seekp(0);
+		file.write(this->Signature.c_str(), 3);
+		file.write((char*)&this->NumberOfEntry, 2);
+		file.write((char*)&this->BeginSectorOfEntryTable, 4);
+		file.write(this->Password.c_str(), 64);
 		file.close();
 		return true;
 	}
