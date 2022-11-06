@@ -143,6 +143,7 @@
     <ClCompile Include="EntryTable.cpp" />
     <ClCompile Include="File.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="SHA256.cpp" />
     <ClCompile Include="Volume.cpp" />
   </ItemGroup>
@@ -150,6 +151,7 @@
     <ClInclude Include="Entry.h" />
     <ClInclude Include="EntryTable.h" />
     <ClInclude Include="File.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="SHA256.h" />
     <ClInclude Include="Volume.h" />
   </ItemGroup>

@@ -44,9 +44,8 @@ void Menu(int& _COMMAND, int& _X, int& line)
 
 	FixConsoleColor(244);
 	cout << "   Huong dan co ban:" << endl;
-	cout << " - Chuyen ban phim sang che do go tieng anh" << endl;
-	cout << " - Nhan phim S de di chuyen xuong duoi" << endl;
-	cout << " - Nhan phim W de di chuyen len tren" << endl;
+	cout << " - Nhan mui ten xuong hoac phim S de di chuyen xuong duoi" << endl;
+	cout << " - Nhan mui ten len hoac phim W de di chuyen len tren" << endl;
 
 	char doc = 179, ngang = 196;
 	char goc1 = 218, goc2 = 191, goc3 = 192, goc4 = 217;
@@ -56,27 +55,27 @@ void Menu(int& _COMMAND, int& _X, int& line)
 	FixConsoleColor(249);
 	Sleep(100);
 	GoToXY(20, 5);
-	cout << "000000  0  0       000000      00 00  0   0   00 00  0000000  000000  0     0";  Sleep(100);
+	cout << "000000  0  0       000000      00 00  0   0   00 00  0000000  000000  0     0";  Sleep(50);
 	FixConsoleColor(250);
 	GoToXY(20, 6);
-	cout << "0       0  0       0          00       0 0   00         0     0       0 0 0 0 ";  Sleep(100);
+	cout << "0       0  0       0          00       0 0   00         0     0       0 0 0 0 ";  Sleep(50);
 	FixConsoleColor(246);
 	GoToXY(20, 7);
-	cout << "000000  0  0       000000       00      0      00       0     000000  0  0  0";   Sleep(100);
+	cout << "000000  0  0       000000       00      0      00       0     000000  0  0  0";   Sleep(50);
 	FixConsoleColor(252);
 	GoToXY(20, 8);
-	cout << "0       0  0       0              00    0        00     0     0       0     0"; Sleep(100);
+	cout << "0       0  0       0              00    0        00     0     0       0     0"; Sleep(50);
 	FixConsoleColor(243);
 	GoToXY(20, 9);
-	cout << "0       0  000000  000000     00 00     0    00 00      0     000000  0     0";  Sleep(100);
+	cout << "0       0  000000  000000     00 00     0    00 00      0     000000  0     0";  Sleep(50);
 	GoToXY(48, 12);
 	FixConsoleColor(237);
 	cout << " CREATE A NEW VOLUME";
-	Sleep(100);
+	Sleep(50);
 	GoToXY(48, 14);
 	FixConsoleColor(229);
 	cout << " OPEN AN EXISTING VOLUME";
-	Sleep(100);
+	Sleep(50);
 	GoToXY(48, 16);
 	FixConsoleColor(225);
 	cout << " INSTRUCTION";
@@ -96,7 +95,7 @@ void Menu(int& _COMMAND, int& _X, int& line)
 		cout << ngang;
 		GoToXY(116 - j, 10);
 		cout << ngang;
-		Sleep(25);
+		Sleep(10);
 	}
 	GoToXY(37, 10);
 	cout << goc1;
@@ -108,18 +107,18 @@ void Menu(int& _COMMAND, int& _X, int& line)
 		cout << doc;
 		GoToXY(79, 32 - i);
 		cout << doc;
-		Sleep(25);
+		Sleep(10);
 	}
 	GoToXY(79, 10);
 	cout << goc2;
 	GoToXY(37, 22);
 	cout << goc3;
-	Sleep(100);
+	Sleep(50);
 	GoToXY(43, 12);
 	cout << ">>";
 	do {
 		_COMMAND = toupper(_getch());
-		if (_COMMAND == 87)
+		if (_COMMAND == 87 || _COMMAND == 72)
 		{
 			if (line >= 14)
 			{
@@ -129,7 +128,7 @@ void Menu(int& _COMMAND, int& _X, int& line)
 				cout << ">>";
 			}
 		}
-		else if (_COMMAND == 83)
+		else if (_COMMAND == 83 || _COMMAND==80)
 		{
 			if (line <= 18)
 			{
@@ -159,9 +158,7 @@ void About()
 	cout << " 3. 20120454 - Le Cong Dat" << endl;
 }
 
-//demo so ham main
-/*
-int main()
+void runMenu()
 {
 	int _COMMAND = -1; // Bien nhan gia tri phim nguoi dung nhap
 	int _X = 0;
@@ -201,10 +198,9 @@ int main()
 			if (line == 20)
 			{
 				system("cls");
-				system("pause");
+				//system("pause");
 				exit(0);
 			}
 		}
 	}
 }
-*/
