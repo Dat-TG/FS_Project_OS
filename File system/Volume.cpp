@@ -1,4 +1,4 @@
-#include "Volume.h"
+﻿#include "Volume.h"
 #include "Menu.h"
 #include <fstream>
 string VolumeListPath = "VolumeList.txt";
@@ -72,6 +72,11 @@ bool Volume::create() {
 		file.write((char*)&this->NumberOfEntry, 2);
 		file.write((char*)&this->BeginSectorOfEntryTable, 4);
 		file.write(&this->Password[0], 64);
+		//Ghi tiếp cho đủ 512B
+		for (int i = 74; i <= 512; i++) {
+			uint8_t x = 0;
+			file.write((char*)&x, 1);
+		}
 		file.close();
 		fstream VolumeList(VolumeListPath, ios_base::app);
 		VolumeList << this->Path << endl;
