@@ -1,6 +1,14 @@
 #include "Volume.h"
+#include "Menu.h"
+#include <fstream>
+string VolumeListPath = "VolumeList.txt";
 Volume::Volume() {
-
+	this->Signature = "DNT";
+	this->NumberOfEntry = 0;
+	this->BeginSectorOfEntryTable = 1;
+	this->Password = "";
+	for (int i = 0; i < 64; i++) this->Password += ' ';
+	this->Path = "";
 }
 Volume::~Volume() {
 
@@ -14,6 +22,9 @@ uint32_t Volume::getBeginSectorOfEntryTable() {
 string Volume::getPassword() {
 	return this->Password;
 }
+string Volume::getPath() {
+	return this->Path;
+}
 void Volume::setNumberOfEntry(uint16_t value) {
 	this->NumberOfEntry = value;
 }
@@ -22,4 +33,58 @@ void Volume::setBeginSectorOfEntryTable(uint32_t value) {
 }
 void Volume::setPassword(string password) {
 	this->Password = password;
+}
+void Volume::setPath(string path) {
+	this->Path = path;
+}
+bool Volume::create() {
+	FixConsoleColor(237);
+	cout << "-------------------------------------------------- CREATE A NEW VOLUME -------------------------------------------------\n\n\n";
+	FixConsoleColor(244);
+	cout << "Nhap dia chi thu muc muon tao volume: " << endl;
+	cout << "Vui long nhap dung dinh dang. Vi du: C:/Users/PC/Documents/" << endl;
+	cout << "Enter your path: ";
+	cin >> this->Path;
+	string name;
+	cout << "Nhap ten cho volume: " << endl;
+	cout << "Vi du: MyFS.Dat" << endl;
+	cout << "Enter your volume name: ";
+	cin >> name;
+	this->Path += name;
+	fstream tempFile(this->Path, ios_base::in | ios_base::binary);
+	if (tempFile.is_open()) {
+		tempFile.close();
+		cout << "Volume da ton tai!" << endl;
+		return false;
+	}
+	fstream file(this->Path, ios_base::out | ios_base::binary);
+	if (file.is_open()) {
+		file.clear();
+		//Write
+		file.write(&this->Signature[0], 3);
+		file.write((char*)&this->NumberOfEntry, 2);
+		file.write((char*)&this->BeginSectorOfEntryTable, 4);
+		file.write(&this->Password[0], 64);
+		file.close();
+		fstream VolumeList(VolumeListPath, ios_base::app);
+		VolumeList << this->Path << endl;
+		VolumeList.close();
+		return true;
+	}
+	return false;
+}
+
+bool Volume::read() {
+	fstream file(this->Path, ios_base::out | ios_base::binary);
+	if (file.is_open()) {
+		file.clear();
+		//Read
+		file.read(&this->Signature[0], 3);
+		file.read((char*)&this->NumberOfEntry, 2);
+		file.read((char*)&this->BeginSectorOfEntryTable, 4);
+		file.read(&this->Password[0], 64);
+		file.close();
+		return true;
+	}
+	return false;
 }
