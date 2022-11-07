@@ -172,6 +172,7 @@ void About()
 }
 
 vector<string>VolumeMenu= {"HIEN THI DANH SACH TAP TIN", "TAO PASSWORD", "THAY DOI PASSWORD", "IMPORT TAP TIN", "THOAT"};
+vector<string>FileMenu = {"XEM THONG TIN FILE", "TAO PASSWORD", "THAY DOI PASSWORD", "OUTPORT", "THOAT"};
 
 
 void runMenu()
@@ -391,6 +392,7 @@ X:FixConsoleColor(255);
 								system("cls");
 								int choose = (line - 12) / 2;
 								if (choose == 0) { //Hiển thị danh sách tập tin
+								OPENFILE:
 									system("cls");
 									FixConsoleColor(237);
 									cout << "---------------------------------------------------DANH SACH TAP TIN---------------------------------------------------\n\n\n";
@@ -473,6 +475,100 @@ X:FixConsoleColor(255);
 										{
 											system("cls");
 											goto DETAILVOLUME;
+										}
+										else if (_COMMAND == 13) {//Mở file
+											id = (line - 12) / 2;
+											system("cls");
+											if (VolumeList[i].getEntryTable().getEntryList()[id].getPassWord()[0] != ' ' && VolumeList[i].getEntryTable().getEntryList()[id].getPassWord() != "") {
+												string pass = " ";
+												cout << "Enter your password to open: ";
+												getline(cin, pass);
+												if (SHA256(pass.c_str()) != VolumeList[id].getPassword()) {
+													cout << "Wrong password!" << endl;
+													system("pause");
+													goto OPENVOLUME;
+												}
+											}
+										DETAILFILE:
+											int id = (line - 12) / 2;
+											system("cls");
+											FixConsoleColor(237);
+											string MainName = VolumeList[i].getEntryTable().getEntryList()[id].getMainName();
+											string ExtensionName = VolumeList[i].getEntryTable().getEntryList()[id].getExtensionName();
+											while (MainName.size() > 0 && MainName.back() == ' ') MainName.pop_back();
+											while (ExtensionName.size() > 0 && ExtensionName.back() == ' ') ExtensionName.pop_back();
+											cout << "----" << MainName<<"."<<ExtensionName << "----\n\n\n";
+											FixConsoleColor(244);
+											cout << "   Huong dan:" << endl;
+											cout << "   - Nhan ESC de quay lai" << endl;
+											cout << "   - File dang mo: " << MainName<<"."<<ExtensionName << endl;
+
+											for (int j = 0; j < FileMenu.size(); j++) {
+												GoToXY(48, 12 + j * 2);
+												FixConsoleColor(237);
+												cout << FileMenu[j];
+											}
+
+											FixConsoleColor(244);
+											for (int j = 38; j < 79; j++)
+											{
+												GoToXY(j, FileMenu.size() * 2 + 12);
+												cout << ngang;
+												GoToXY(116 - j, 10);
+												cout << ngang;
+												Sleep(10);
+											}
+											GoToXY(37, 10);
+											cout << goc1;
+											GoToXY(79, FileMenu.size() * 2 + 12);
+											cout << goc4;
+											for (int j = 11; j < FileMenu.size() * 2 + 12 + 1; j++)
+											{
+												GoToXY(37, j);
+												cout << doc;
+												GoToXY(79, FileMenu.size() * 2 + 12 + 10 - j);
+												cout << doc;
+												Sleep(10);
+											}
+											GoToXY(79, 10);
+											cout << goc2;
+											GoToXY(37, FileMenu.size() * 2 + 12);
+											cout << goc3;
+											Sleep(50);
+											GoToXY(43, 12);
+											cout << ">>";
+											int line = 12;
+											do {
+												_COMMAND = toupper(_getch());
+												if (_COMMAND == 87 || _COMMAND == 72)
+												{
+													if (line >= 14)
+													{
+														GoToXY(_X, line);
+														cout << "  ";
+														MoveUp(_X, line);
+														cout << ">>";
+													}
+												}
+												else if (_COMMAND == 83 || _COMMAND == 80)
+												{
+													if (line <= FileMenu.size() * 2 + 12 - 4)
+													{
+														GoToXY(_X, line);
+														cout << "  ";
+														MoveDown(_X, line);
+														cout << ">>";
+													}
+												}
+												else if (_COMMAND == 27) //Quay lai
+												{
+													system("cls");
+													goto OPENFILE;
+												}
+												else if (_COMMAND == 13) {
+
+												}
+											} while (true);
 										}
 									} while (true);
 									system("pause");
