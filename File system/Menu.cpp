@@ -600,7 +600,41 @@ X:FixConsoleColor(255);
 														system("pause");
 													}
 													else if (choose == 2) {//Đổi password
-
+														system("cls");
+														if (curEntry.getPassWord()[0] == ' ' || curEntry.getPassWord() == "") {
+															cout << "This file did not have a password!" << endl;
+															cout << "Create your pasword first!" << endl;
+															//cout << VolumeList[i].getPassword() << endl;
+															system("pause");
+															goto DETAILFILE;
+														}
+														string pass = " ";
+														cout << "Enter your current password: ";
+														getline(cin, pass);
+														if (SHA256(pass.c_str()) != curEntry.getPassWord()) {
+															cout << "Wrong password!" << endl;
+															system("pause");
+															goto DETAILFILE;
+														}
+														cout << "Attention: Password should not start with a space character!" << endl;
+														pass = " ";
+														while (pass[0] == ' ' || pass == "") {
+															cout << "Enter your new password: ";
+															getline(cin, pass);
+														}
+														string retype = "";
+														while (retype != pass) {
+															cout << "Retype your new password: ";
+															getline(cin, retype);
+														}
+														curEntry.setPassWord(SHA256(pass.c_str()));
+														curEntry.write(VolumeList[i].getPath());
+														EntryTable entryTable = VolumeList[i].getEntryTable();
+														vector<Entry>list = entryTable.getEntryList();
+														list[id] = curEntry;
+														entryTable.setEntryList(list);
+														VolumeList[i].setEntryTable(entryTable);
+														system("pause");
 													}
 													else if (choose == 3) {//Outport
 
@@ -784,7 +818,7 @@ X:FixConsoleColor(255);
 									}
 									//cout << start << endl; system("pause");
 									vol.seekp(start);
-									cout << start << endl; system("pause");
+									//cout << start << endl; system("pause");
 									vol.write(&MainName[0], 14);
 									vol.write(&ExtensionName[0], 4);
 									vol.write((char*)&Children, 1);

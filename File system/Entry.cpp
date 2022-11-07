@@ -88,9 +88,9 @@ void Entry::write(string volumePath) {
 	}
 	//cout << main << " " << ext << " " << this->Password << endl;
 	//system("pause");
-	cout << pos << endl;
-	cout << main << " " << ext << endl; 
-	cout << this->MainName << " " << this->ExtensionName << endl; system("pause");
+	//cout << pos << endl;
+	//cout << main << " " << ext << endl; 
+	//cout << this->MainName << " " << this->ExtensionName << endl; system("pause");
 	vol.seekp(pos, ios::beg);
 	vol.write(&this->MainName[0], 14);
 	vol.write(&this->ExtensionName[0], 4);
