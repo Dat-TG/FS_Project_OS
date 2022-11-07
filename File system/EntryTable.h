@@ -12,4 +12,5 @@ public:
 	vector<Entry> getEntryList();
 	void addEntry(Entry e);
 	void readEntryList(string volumePath);
+	void setEntryList(vector<Entry>list);
 };

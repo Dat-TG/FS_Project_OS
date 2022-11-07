@@ -483,18 +483,19 @@ X:FixConsoleColor(255);
 												string pass = " ";
 												cout << "Enter your password to open: ";
 												getline(cin, pass);
-												if (SHA256(pass.c_str()) != VolumeList[id].getPassword()) {
+												if (SHA256(pass.c_str()) != VolumeList[i].getEntryTable().getEntryList()[id].getPassWord()) {
 													cout << "Wrong password!" << endl;
 													system("pause");
-													goto OPENVOLUME;
+													goto OPENFILE;
 												}
 											}
 										DETAILFILE:
 											int id = (line - 12) / 2;
+											Entry curEntry = VolumeList[i].getEntryTable().getEntryList()[id];
 											system("cls");
 											FixConsoleColor(237);
-											string MainName = VolumeList[i].getEntryTable().getEntryList()[id].getMainName();
-											string ExtensionName = VolumeList[i].getEntryTable().getEntryList()[id].getExtensionName();
+											string MainName = curEntry.getMainName();
+											string ExtensionName = curEntry.getExtensionName();
 											while (MainName.size() > 0 && MainName.back() == ' ') MainName.pop_back();
 											while (ExtensionName.size() > 0 && ExtensionName.back() == ' ') ExtensionName.pop_back();
 											cout << "----" << MainName<<"."<<ExtensionName << "----\n\n\n";
@@ -566,7 +567,48 @@ X:FixConsoleColor(255);
 													goto OPENFILE;
 												}
 												else if (_COMMAND == 13) {
+													int choose = (line - 12) / 2;
+													if (choose == 0) {//Hiển thị thông tin file
 
+													}
+													else if (choose == 1) {//Tạo password
+														system("cls");
+														if (curEntry.getPassWord()[0] != ' ' && curEntry.getPassWord() != "") {
+															cout << "This file already had a password!" << endl;
+															//cout << VolumeList[i].getPassword() << endl;
+															system("pause");
+															goto DETAILFILE;
+														}
+														cout << "Attention: Password should not start with a space character!" << endl;
+														string pass = " ";
+														while (pass[0] == ' ' || pass == "") {
+															cout << "Enter your password: ";
+															getline(cin, pass);
+														}
+														string retype = "";
+														while (retype != pass) {
+															cout << "Retype your password: ";
+															getline(cin, retype);
+														}
+														curEntry.setPassWord(SHA256(pass.c_str()));
+														curEntry.write(VolumeList[i].getPath());
+														EntryTable entryTable = VolumeList[i].getEntryTable();
+														vector<Entry>list = entryTable.getEntryList();
+														list[id] = curEntry;
+														entryTable.setEntryList(list);
+														VolumeList[i].setEntryTable(entryTable);
+														system("pause");
+													}
+													else if (choose == 2) {//Đổi password
+
+													}
+													else if (choose == 3) {//Outport
+
+													}
+													else {
+														goto OPENFILE;
+													}
+													goto DETAILFILE;
 												}
 											} while (true);
 										}
@@ -668,7 +710,7 @@ X:FixConsoleColor(255);
 									uint8_t Status=0; //Trạng thái (0: chưa bị xóa, 1: đã bị xóa)
 									uint8_t Children=0; //Số file/folder con
 									string Password=""; //Mật khẩu
-									uint16_t BeginSector; //Sector bắt đầu
+									uint32_t BeginSector; //Sector bắt đầu
 									struct stat fileInfo;
 
 									while (Password.size() < 64) Password += ' ';
@@ -713,7 +755,7 @@ X:FixConsoleColor(255);
 									//Ghi thong tin file len entry table va vung data
 									fstream vol(VolumeList[i].getPath(), ios_base::binary | ios::out | ios::in);
 									vol.seekp(0, ios::end);
-									BeginSector = vol.tellp() / 512;
+									BeginSector = (uint32_t)((uint32_t)vol.tellp() / (uint32_t)512);
 									fstream file(path, ios_base::binary | ios::in);
 									char* data = NULL;
 									file.seekg(0, ios::end);
@@ -733,7 +775,7 @@ X:FixConsoleColor(255);
 										start += 96LL;
 										vol.seekp(start);
 										vol.read((char*)&x, 1);
-										if (start+95 > (UINT16_MAX + 1) * 512) {
+										if (start+96 > (UINT16_MAX + 1) * 512) {
 											cout << "Volume is full!" << endl;
 											system("pause");
 											goto OPENVOLUME;
@@ -742,6 +784,7 @@ X:FixConsoleColor(255);
 									}
 									//cout << start << endl; system("pause");
 									vol.seekp(start);
+									cout << start << endl; system("pause");
 									vol.write(&MainName[0], 14);
 									vol.write(&ExtensionName[0], 4);
 									vol.write((char*)&Children, 1);

@@ -30,7 +30,7 @@ void EntryTable::readEntryList(string volumePath) {
 	uint8_t Children = 0; //Số file/folder con
 	string Password = ""; //Mật khẩu
 	while (Password.size() < 64) Password += ' ';
- 	uint16_t BeginSector; //Sector bắt đầu
+ 	uint32_t BeginSector; //Sector bắt đầu
 	file.read(&MainName[0], 14);
 	//cout << MainName << endl;
 	/*char* data = new char[15];
@@ -65,4 +65,8 @@ void EntryTable::readEntryList(string volumePath) {
 		file.read(&MainName[0], 14);
 	}
 	file.close();
+}
+
+void EntryTable::setEntryList(vector<Entry>list) {
+	this->EntryList = list;
 }
