@@ -1,6 +1,7 @@
 ﻿#include "Volume.h"
 #include "Menu.h"
 #include <fstream>
+#include <Windows.h>
 string VolumeListPath = "VolumeList.txt";
 Volume::Volume() {
 	this->Signature = "DNT";
@@ -103,7 +104,7 @@ bool Volume::read() {
 bool Volume::write() {
 	fstream file(this->Path, ios_base::binary|ios::out|ios::in);
 	if (file.is_open()) {
-		file.seekp(0);
+		file.seekp(0, ios::beg);
 		file.write(this->Signature.c_str(), 3);
 		file.write((char*)&this->NumberOfEntry, 2);
 		file.write((char*)&this->BeginSectorOfEntryTable, 4);
@@ -112,4 +113,30 @@ bool Volume::write() {
 		return true;
 	}
 	return false;
+}
+void Volume::initEntryTable() {
+	fstream file(this->Path, ios_base::binary | ios::out | ios::in);
+	file.seekp(0, ios::end);
+	uint32_t cur = (uint32_t)file.tellp();
+	cur = cur / 512LL;
+	if (cur == 0) exit(0);
+	int maxNumberOfEntry = UINT16_MAX;
+	if (cur == this->BeginSectorOfEntryTable) {
+		cout << "Entry Table Formatting. Please wait..." << endl;
+		uint8_t x = 0;
+		for (int i = 1; i <= maxNumberOfEntry * 96; i++) {
+			file.write((char*)&x, 1);
+		}
+		for (int i = maxNumberOfEntry * 96; i % 512 != 0; i++) {
+			file.write((char*)&x, 1);
+		}
+	}
+}
+
+EntryTable Volume::getEntryTable() {
+	return this->entryTable;
+}
+
+void Volume::setEntryTable(EntryTable entryTable) {
+	this->entryTable = entryTable;
 }

@@ -1,4 +1,5 @@
-﻿#include <Windows.h>
+﻿#define _CRT_SECURE_NO_WARNINGS
+#include <Windows.h>
 #include <iostream>
 #include <conio.h>
 #include "Volume.h"
@@ -6,6 +7,11 @@
 #include <fstream>
 #include <string>
 #include "SHA256.h"
+#include <ctime>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <cerrno>
+#include "numeric.h"
 using namespace std;
 
 void FixConsoleWindow() //Ham co dinh cua so
@@ -165,7 +171,8 @@ void About()
 	cout << " 3. 20120454 - Le Cong Dat" << endl;
 }
 
-vector<string>VolumeMenu= {"HIEN THI DANH SACH TAP TIN", "TAO PASSWORD", "THAY DOI PASSWORD", "THOAT"};
+vector<string>VolumeMenu= {"HIEN THI DANH SACH TAP TIN", "TAO PASSWORD", "THAY DOI PASSWORD", "IMPORT TAP TIN", "THOAT"};
+
 
 void runMenu()
 {
@@ -179,7 +186,7 @@ void runMenu()
 	while (true) {
 		if (file.eof()) break;
 		path = "";
-		file >> path;
+		getline(file, path);
 		if (path == "") break;
 		Volume volume;
 		volume.setPath(path);
@@ -309,6 +316,7 @@ X:FixConsoleColor(255);
 						}
 					DETAILVOLUME:
 						int i = (line - 12) / 2;
+						VolumeList[i].initEntryTable();
 						system("cls");
 						FixConsoleColor(237);
 						cout << "----"<<VolumeList[i].getPath()<<"----\n\n\n";
@@ -384,6 +392,89 @@ X:FixConsoleColor(255);
 								int choose = (line - 12) / 2;
 								if (choose == 0) { //Hiển thị danh sách tập tin
 									system("cls");
+									FixConsoleColor(237);
+									cout << "---------------------------------------------------DANH SACH TAP TIN---------------------------------------------------\n\n\n";
+									EntryTable entryTable;
+									entryTable.readEntryList(VolumeList[i].getPath());
+									VolumeList[i].setNumberOfEntry(entryTable.getEntryList().size());
+									VolumeList[i].setEntryTable(entryTable);
+									FixConsoleColor(244);
+									cout << "   Huong dan:" << endl;
+									cout << "   - Nhan ESC de quay lai" << endl;
+									cout << "   - Volume dang mo: " << VolumeList[i].getPath() << endl;
+									if (VolumeList[i].getNumberOfEntry() <= 0) {
+										FixConsoleColor(244);
+										cout << "Chua co tap tin nao!" << endl;
+										system("pause");
+										goto DETAILVOLUME;
+									}
+									for (int j = 0; j < VolumeList[i].getNumberOfEntry(); j++) {
+										GoToXY(48, 12 + j * 2);
+										FixConsoleColor(237);
+										string MainName = VolumeList[i].getEntryTable().getEntryList()[j].getMainName();
+										string ExtensionName = VolumeList[i].getEntryTable().getEntryList()[j].getExtensionName();
+										while (MainName.size() > 0 && MainName.back() == ' ') MainName.pop_back();
+										while (ExtensionName.size() > 0 && ExtensionName.back() == ' ') ExtensionName.pop_back();
+										cout << MainName+"."+ExtensionName << endl;
+									}
+
+									FixConsoleColor(244);
+									for (int j = 38; j < 79; j++)
+									{
+										GoToXY(j, 12 + VolumeList[i].getNumberOfEntry() * 2);
+										cout << ngang;
+										GoToXY(116 - j, 10);
+										cout << ngang;
+										Sleep(10);
+									}
+									GoToXY(37, 10);
+									cout << goc1;
+									GoToXY(79, 12 + VolumeList[i].getNumberOfEntry() * 2);
+									cout << goc4;
+									for (int j = 11; j < VolumeList[i].getNumberOfEntry() * 2 + 12 + 1; j++)
+									{
+										GoToXY(37, j);
+										cout << doc;
+										GoToXY(79, VolumeList[i].getNumberOfEntry() * 2 + 12 + 10 - j);
+										cout << doc;
+										Sleep(10);
+									}
+									GoToXY(79, 10);
+									cout << goc2;
+									GoToXY(37, VolumeList[i].getNumberOfEntry() * 2 + 12);
+									cout << goc3;
+									Sleep(50);
+									GoToXY(43, 12);
+									cout << ">>";
+									int line = 12;
+									do {
+										_COMMAND = toupper(_getch());
+										if (_COMMAND == 87 || _COMMAND == 72)
+										{
+											if (line >= 14)
+											{
+												GoToXY(_X, line);
+												cout << "  ";
+												MoveUp(_X, line);
+												cout << ">>";
+											}
+										}
+										else if (_COMMAND == 83 || _COMMAND == 80)
+										{
+											if (line <= 12 + VolumeList[i].getNumberOfEntry() * 2 - 4)
+											{
+												GoToXY(_X, line);
+												cout << "  ";
+												MoveDown(_X, line);
+												cout << ">>";
+											}
+										}
+										else if (_COMMAND == 27) //Thoat
+										{
+											system("cls");
+											goto DETAILVOLUME;
+										}
+									} while (true);
 									system("pause");
 								}
 								else if (choose == 1) {//Tạo mật khẩu
@@ -445,6 +536,129 @@ X:FixConsoleColor(255);
 									VolumeList[i].write();
 									system("pause");
 								}
+								else if (choose == 3) {//Import tap tin
+									cout << "Nhap duong dan cua tap tin: " << endl;
+									cout << "Vui long nhap dung dinh dang. Vi du: C:/Users/PC/Documents/HeDieuHanh.pdf" << endl;
+									cout << "Enter your path: ";
+									string path;
+									getline(cin, path);
+									fstream temp(path, ios::in);
+									if (!temp) {
+										cout << "File khong ton tai!" << endl;
+										system("pause");
+										goto DETAILVOLUME;
+									}
+									Entry* e = new Entry;
+									string MainName = "", ExtensionName = "";
+									for (int i = path.size() - 1; i >= 0; i--) {
+										if (path[i] == '.') {
+											for (int j = i - 1; j >= 0; j--) {
+												if (path[j] == '/') {
+													break;
+												}
+												MainName = path[j] + MainName;
+											}
+											break;
+										}
+										ExtensionName = path[i] + ExtensionName;
+									}
+									while (MainName.size() < 14) MainName += ' ';
+									while (ExtensionName.size() < 4) ExtensionName += ' ';
+
+
+									uint16_t ModifiedTime; //Thời gian cập nhật
+									uint16_t ModifiedDate; //Ngày cập nhật
+									uint32_t Size; //Kích thước
+									uint8_t Status=0; //Trạng thái (0: chưa bị xóa, 1: đã bị xóa)
+									uint8_t Children=0; //Số file/folder con
+									string Password=""; //Mật khẩu
+									uint16_t BeginSector; //Sector bắt đầu
+									struct stat fileInfo;
+
+									while (Password.size() < 64) Password += ' ';
+									if (stat(path.c_str(), &fileInfo) != 0) {  // Use stat() to get the info
+										std::cerr << "Error: " << strerror(errno) << '\n';
+									}
+									//cout << MainName << endl << ExtensionName << endl;
+									/*std::cout << "Type:         : ";
+									if ((fileInfo.st_mode & S_IFMT) == S_IFDIR) { // From sys/types.h
+										std::cout << "Directory\n";
+									}
+									else {
+										std::cout << "File\n";
+									}
+
+									std::cout << "Size          : " <<
+										fileInfo.st_size << '\n';               // Size in bytes
+									std::cout << "Device        : " <<
+										(char)(fileInfo.st_dev + 'A') << '\n';  // Device number
+									std::cout << "Created       : " <<
+										std::ctime(&fileInfo.st_ctime);         // Creation time
+									std::cout << "Modified      : " <<
+										std::ctime(&fileInfo.st_mtime);         // Last mod time*/
+									tm tm = *localtime(&fileInfo.st_mtime);
+									long long gio = tm.tm_hour,
+										phut = tm.tm_min,
+										giay = tm.tm_sec/2,
+										ngay = tm.tm_mday,
+										thang = tm.tm_mon + 1,
+										nam = tm.tm_year + 1900 - 1980;
+									gio = decToBinary(gio);
+									phut = decToBinary(phut);
+									giay = decToBinary(giay);
+									ngay = decToBinary(ngay);
+									thang = decToBinary(thang);
+									nam = decToBinary(nam);
+									long long time = gio * 100000000000LL + phut * 100000LL + giay;
+									long long date = nam*1000000000LL + thang*100000LL + ngay;
+									ModifiedDate = binaryToDecimal(date);
+									ModifiedTime = binaryToDecimal(time);
+									Size = (uint32_t)fileInfo.st_size;
+									//Ghi thong tin file len entry table va vung data
+									fstream vol(VolumeList[i].getPath(), ios_base::binary | ios::out | ios::in);
+									vol.seekp(0, ios::end);
+									BeginSector = vol.tellp() / 512;
+									fstream file(path, ios_base::binary | ios::in);
+									char* data = NULL;
+									file.seekg(0, ios::end);
+									long long dataSize = file.tellg();
+									data = new char[dataSize+1];
+									file.read(data, dataSize);
+									file.close();
+									vol.write(data, dataSize);
+									uint8_t x = 0;
+									for (int i = dataSize; i % 512 != 0; i++) {
+										vol.write((char*)&x, 1);
+									}
+									long long start = VolumeList[i].getBeginSectorOfEntryTable() * 512;
+									vol.seekp(start);
+									vol.read((char*)&x, 1);
+									while (x != 0) {
+										start += 96LL;
+										vol.seekp(start);
+										vol.read((char*)&x, 1);
+										if (start+95 > (UINT16_MAX + 1) * 512) {
+											cout << "Volume is full!" << endl;
+											system("pause");
+											goto OPENVOLUME;
+											break;
+										}
+									}
+									//cout << start << endl; system("pause");
+									vol.seekp(start);
+									vol.write(&MainName[0], 14);
+									vol.write(&ExtensionName[0], 4);
+									vol.write((char*)&Children, 1);
+									vol.write((char*)&Status, 1);
+									vol.write((char*)&time, 2);
+									vol.write((char*)&date, 2);
+									vol.write((char*)&BeginSector, 4);
+									vol.write((char*)&Size, 4);
+									vol.write(&Password[0], 64);
+									vol.close();
+									//cout << MainName;
+									system("pause");
+								}
 								else {//Quay lai
 									goto OPENVOLUME;
 								}
@@ -467,7 +681,7 @@ X:FixConsoleColor(255);
 				cout << "Vui long nhap dung dinh dang. Vi du: C:/Users/PC/Documents/MyFS.Dat" << endl;
 				cout << "Enter your path: ";
 				string path;
-				cin >> path;
+				getline(cin, path);
 				fstream temp(path, ios::in);
 				if (!temp) {
 					cout << "File does not exist!" << endl;

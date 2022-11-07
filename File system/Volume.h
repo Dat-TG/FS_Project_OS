@@ -7,6 +7,7 @@ private:
 	uint32_t BeginSectorOfEntryTable; //Sector bắt đầu của Entry Table
 	string Password; //Mật khẩu của volume đã mã hóa
 	string Path; //Địa chỉ lưu Volume
+	EntryTable entryTable; //Entry Table
 public:
 	Volume();
 	~Volume();
@@ -16,6 +17,7 @@ public:
 	string getPassword();
 	string getPath();
 	string getSignature();
+	EntryTable getEntryTable();
 	//Setter
 	void setNumberOfEntry(uint16_t value);
 	void setBeginSectorOfEntryTable(uint32_t value);
@@ -24,4 +26,6 @@ public:
 	void setPath(string path);
 	bool read(); // Đọc thông tin volume
 	bool write(); //Ghi sửa thông tin volume
+	void initEntryTable(); //Khởi tạo vùng EntryTable
+	void setEntryTable(EntryTable entryTable);
 };
