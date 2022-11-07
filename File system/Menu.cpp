@@ -746,6 +746,7 @@ X:FixConsoleColor(255);
 															for (uint32_t k = 1; k <= curEntry.getSize(); k++) {
 																volume.write((char*)&x, 1);
 															}
+															volume.close();
 															curEntry.clear(VolumeList[i].getPath());
 															EntryTable entryTable = VolumeList[i].getEntryTable();
 															vector<Entry>list = entryTable.getEntryList();
