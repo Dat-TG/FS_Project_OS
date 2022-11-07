@@ -569,7 +569,42 @@ X:FixConsoleColor(255);
 												else if (_COMMAND == 13) {
 													int choose = (line - 12) / 2;
 													if (choose == 0) {//Hiển thị thông tin file
-
+														system("cls");
+														FixConsoleColor(237);
+														cout << "-----------------------------------------------------FILE DETAILS-----------------------------------------------------\n\n\n";
+														FixConsoleColor(244);
+														//cout << "File dang mo: " << MainName << "." << ExtensionName << endl;
+														GoToXY(48, 12);
+														cout << "Ten file: " << MainName << "." << ExtensionName << endl;
+														GoToXY(48, 14);
+														long long datetemp = decToBinary(curEntry.getModifiedDate());
+														//cout << datetemp << endl;
+														long long timetemp = decToBinary(curEntry.getModifiedTime());
+														int ngay=0, thang=0, nam=0, gio=0, phut=0, giay=0;
+														ngay = datetemp % 100000LL;
+														ngay = binaryToDecimal(ngay);
+														datetemp /= 100000LL;
+														thang = datetemp % 10000LL;
+														thang = binaryToDecimal(thang);
+														datetemp /= 10000LL;
+														nam = datetemp;
+														nam = 1980 + binaryToDecimal(nam);
+														cout << "Ngay cap nhat: " <<ngay<<"/"<<thang<<"/"<<nam << endl;
+														GoToXY(48, 16);
+														giay = timetemp % 100000LL;
+														giay = 2 * binaryToDecimal(giay);
+														timetemp /= 100000LL;
+														phut = timetemp % 1000000LL;
+														phut = binaryToDecimal(phut);
+														timetemp /= 1000000LL;
+														gio = timetemp % 100000LL;
+														gio = binaryToDecimal(gio);
+														timetemp /= 100000LL;
+														cout << "Gio cap nhat: " <<gio<<":"<<phut<<":"<<giay<< endl;
+														GoToXY(48, 18);
+														cout << "Kich thuoc: " << curEntry.getSize() << " bytes"<<endl;
+														system("pause");
+														goto DETAILFILE;
 													}
 													else if (choose == 1) {//Tạo password
 														system("cls");
@@ -785,6 +820,7 @@ X:FixConsoleColor(255);
 									long long date = nam*1000000000LL + thang*100000LL + ngay;
 									ModifiedDate = binaryToDecimal(date);
 									ModifiedTime = binaryToDecimal(time);
+									//cout << date << " " << ModifiedDate << endl; system("pause");
 									Size = (uint32_t)fileInfo.st_size;
 									//Ghi thong tin file len entry table va vung data
 									fstream vol(VolumeList[i].getPath(), ios_base::binary | ios::out | ios::in);
@@ -823,8 +859,8 @@ X:FixConsoleColor(255);
 									vol.write(&ExtensionName[0], 4);
 									vol.write((char*)&Children, 1);
 									vol.write((char*)&Status, 1);
-									vol.write((char*)&time, 2);
-									vol.write((char*)&date, 2);
+									vol.write((char*)&ModifiedTime, 2);
+									vol.write((char*)&ModifiedDate, 2);
 									vol.write((char*)&BeginSector, 4);
 									vol.write((char*)&Size, 4);
 									vol.write(&Password[0], 64);
