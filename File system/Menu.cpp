@@ -172,7 +172,7 @@ void About()
 }
 
 vector<string>VolumeMenu= {"HIEN THI DANH SACH TAP TIN", "TAO PASSWORD", "THAY DOI PASSWORD", "IMPORT TAP TIN", "THOAT"};
-vector<string>FileMenu = {"XEM THONG TIN FILE", "TAO PASSWORD", "THAY DOI PASSWORD", "OUTPORT", "THOAT"};
+vector<string>FileMenu = {"XEM THONG TIN FILE", "TAO PASSWORD", "THAY DOI PASSWORD", "OUTPORT", "XOA", "XOA VINH VIEN", "THOAT"};
 
 
 void runMenu()
@@ -672,9 +672,48 @@ X:FixConsoleColor(255);
 														system("pause");
 													}
 													else if (choose == 3) {//Outport
+														system("cls");
+														FixConsoleColor(237);
+														cout << "-----------------------------------------------------FILE OUTPORT-----------------------------------------------------\n\n\n";
+														FixConsoleColor(244);
+														cout << "Nhap duong dan de luu tap tin: " << endl;
+														cout << "Vui long nhap dung dinh dang. Vi du: C:/Users/PC/Documents/" << endl;
+														cout << "Enter your path: ";
+														string path;
+														getline(cin, path);
+														cout << "Nhap ten tap tin muon luu: " << endl;
+														cout << "Vui long nhap chinh xac. Vi du: HeDieuHanh.pdf" << endl;
+														cout << "Enter your file name: ";
+														string filename;
+														getline(cin, filename);
+														path += filename;
+														fstream temp(path, ios::in);
+														if (temp) {
+															cout << "File da ton tai! Vui long thu lai voi ten file khac!" << endl;
+															temp.close();
+															system("pause");
+															goto DETAILFILE;
+														}
+														char* data = new char[curEntry.getSize()];
+														ofstream file;
+														file.open(path, ios::binary);
+														ifstream vol;
+														vol.open(VolumeList[i].getPath(), ios::binary);
+														vol.seekg(curEntry.getBeginSector() * 512U, ios::beg);
+														vol.read(data, curEntry.getSize());
+														vol.close();
+														file.write(data, curEntry.getSize());
+														delete[] data;
+														file.close();
+														system("pause");
+													}
+													else if (choose == 4) {//Xoa binh thuong
+													
+													}
+													else if (choose == 5) {//Xoa vinh vien
 
 													}
-													else {
+													else {//Quay lai
 														goto OPENFILE;
 													}
 													goto DETAILFILE;
@@ -830,10 +869,12 @@ X:FixConsoleColor(255);
 									char* data = NULL;
 									file.seekg(0, ios::end);
 									long long dataSize = file.tellg();
-									data = new char[dataSize+1];
+									data = new char[dataSize];
+									file.seekg(0, ios::beg);
 									file.read(data, dataSize);
 									file.close();
 									vol.write(data, dataSize);
+									delete[] data;
 									uint8_t x = 0;
 									for (int i = dataSize; i % 512 != 0; i++) {
 										vol.write((char*)&x, 1);
