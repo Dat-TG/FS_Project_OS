@@ -103,3 +103,32 @@ void Entry::write(string volumePath) {
 	vol.write(&this->Password[0], 64);
 	vol.close();
 }
+
+void Entry::clear(string volumePath) {
+	fstream vol(volumePath, ios::binary | ios::out | ios::in);
+	long long pos = 512LL;
+	vol.seekg(pos, ios::beg);
+	string main = "";
+	while (main.size() < 14) main += ' ';
+	string ext = "";
+	while (ext.size() < 4) ext += ' ';
+	vol.read(&main[0], 14);
+	vol.read(&ext[0], 4);
+	while (main != this->MainName || ext != this->ExtensionName) {
+		//cout << pos << endl;
+		pos += 96LL;
+		vol.seekg(pos, ios::beg);
+		vol.read(&main[0], 14);
+		vol.read(&ext[0], 4);
+		//cout << main << " " << ext << endl;
+	}
+	//cout << main << " " << ext << " " << this->Password << endl;
+	//system("pause");
+	//cout << pos << endl;
+	//cout << main << " " << ext << endl; 
+	//cout << this->MainName << " " << this->ExtensionName << endl; system("pause");
+	vol.seekp(pos, ios::beg);
+	uint8_t x = 0;
+	for (int i=1;i<=96;i++) vol.write((char*)&x, 1);
+	vol.close();
+}

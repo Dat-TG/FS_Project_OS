@@ -727,7 +727,36 @@ X:FixConsoleColor(255);
 														goto OPENFILE;
 													}
 													else if (choose == 5) {//Xoa vinh vien
-
+														system("cls");
+														cout << "Are you sure you want to permanently delete this file?" << endl;
+														cout << "Press Enter to delete" << endl;
+														cout << "Press ESC to cancel" << endl;
+														int type = 0; 
+														while (type != 13 && type != 27) {
+															type = toupper(_getch());
+														}
+														if (type == 27) {
+															goto DETAILFILE;
+														}
+														else if (type == 13) {
+															system("cls");
+															fstream volume(VolumeList[i].getPath(), ios::binary | ios::out | ios::in);
+															volume.seekp(curEntry.getBeginSector() * 512U, ios::beg);
+															uint8_t x = 0;
+															for (uint32_t k = 1; k <= curEntry.getSize(); k++) {
+																volume.write((char*)&x, 1);
+															}
+															curEntry.clear(VolumeList[i].getPath());
+															EntryTable entryTable = VolumeList[i].getEntryTable();
+															vector<Entry>list = entryTable.getEntryList();
+															//list[id] = curEntry;
+															list.erase(list.begin() + id);
+															entryTable.setEntryList(list);
+															VolumeList[i].setEntryTable(entryTable);
+															cout << "Tap tin da bi xoa hoan toan khoi may tinh!" << endl;
+															system("pause");
+															goto OPENFILE;
+														}
 													}
 													else {//Quay lai
 														goto OPENFILE;
@@ -1106,7 +1135,37 @@ X:FixConsoleColor(255);
 													goto OPENREMOVE;
 												}
 												else if (choose == 1) {//Xoa vinh vien
-
+													system("cls");
+													cout << "Are you sure you want to permanently delete this file?" << endl;
+													cout << "Press Enter to delete" << endl;
+													cout << "Press ESC to cancel" << endl;
+													int type = 0;
+													while (type != 13 && type != 27) {
+														type = toupper(_getch());
+													}
+													if (type == 27) {
+														goto OPENREMOVE;
+													}
+													else if (type == 13) {
+														system("cls");
+														fstream volume(VolumeList[i].getPath(), ios::binary | ios::out | ios::in);
+														volume.seekp(curEntry.getBeginSector() * 512U, ios::beg);
+														uint8_t x = 0;
+														for (uint32_t k = 1; k <= curEntry.getSize(); k++) {
+															volume.write((char*)&x, 1);
+														}
+														volume.close();
+														curEntry.clear(VolumeList[i].getPath());
+														EntryTable entryTable = VolumeList[i].getEntryTable();
+														vector<Entry>list = entryTable.getRemoveList();
+														//list[id] = curEntry;
+														list.erase(list.begin() + id);
+														entryTable.setRemoveList(list);
+														VolumeList[i].setEntryTable(entryTable);
+														cout << "Tap tin da bi xoa hoan toan khoi may tinh!" << endl;
+														system("pause");
+														goto OPENREMOVE;
+													}
 												}
 												else {//Thoat
 													goto OPENREMOVE;

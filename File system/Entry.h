@@ -34,4 +34,5 @@ public:
 	void setPassWord(string password);
 	void setChildren(uint8_t value);
 	void write(string volumePath);//Sửa thông tin entry
+	void clear(string volumePath);//Xóa hoàn toàn entry 
 };

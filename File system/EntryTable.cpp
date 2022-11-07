@@ -18,7 +18,6 @@ void EntryTable::addEntry(Entry e) {
 
 void EntryTable::readEntryList(string volumePath) {
 	fstream file(volumePath, ios::binary | ios::in);
-	file.seekg(512, ios::beg);
 	string MainName = "";
 	while (MainName.size() < 14) MainName += ' ';
 	string ExtensionName = "";
@@ -31,7 +30,6 @@ void EntryTable::readEntryList(string volumePath) {
 	string Password = ""; //Mật khẩu
 	while (Password.size() < 64) Password += ' ';
  	uint32_t BeginSector; //Sector bắt đầu
-	file.read(&MainName[0], 14);
 	//cout << MainName << endl;
 	/*char* data = new char[15];
 	file.read(data, 14);
@@ -40,8 +38,15 @@ void EntryTable::readEntryList(string volumePath) {
 	//char* data = new char[97];
 	//file.read(data, 96);
 	//cout << data << endl;
-	while (MainName[0] != NULL) {
+	uint32_t pos = 512-96;
+	while (pos<UINT16_MAX*96+512) {
+		pos += 96;
 		Entry e;
+		file.seekg(pos, ios::beg);
+		file.read(&MainName[0], 14);
+		if (MainName[0] == NULL) {
+			continue;
+		}
 		//while (MainName.size()>0 && MainName.back() == ' ') MainName.pop_back();
 		e.setMainName(MainName.c_str());
 		file.read(&ExtensionName[0], 4);
@@ -63,7 +68,7 @@ void EntryTable::readEntryList(string volumePath) {
 		e.setSize(Size);
 		if (Status == 0) this->EntryList.push_back(e);
 		else this->RemoveList.push_back(e);
-		file.read(&MainName[0], 14);
+		file.seekg(pos, ios::beg);
 	}
 	file.close();
 }
