@@ -61,7 +61,8 @@ void EntryTable::readEntryList(string volumePath) {
 		e.setModifiedTime(ModifiedTime);
 		e.setPassWord(Password.c_str());
 		e.setSize(Size);
-		this->EntryList.push_back(e);
+		if (Status == 0) this->EntryList.push_back(e);
+		else this->RemoveList.push_back(e);
 		file.read(&MainName[0], 14);
 	}
 	file.close();
@@ -69,4 +70,12 @@ void EntryTable::readEntryList(string volumePath) {
 
 void EntryTable::setEntryList(vector<Entry>list) {
 	this->EntryList = list;
+}
+
+vector<Entry> EntryTable::getRemoveList() {
+	return this->RemoveList;
+}
+
+void EntryTable::setRemoveList(vector<Entry>list) {
+	this->RemoveList = list;
 }

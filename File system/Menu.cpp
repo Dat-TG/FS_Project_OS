@@ -171,8 +171,9 @@ void About()
 	cout << " 3. 20120454 - Le Cong Dat" << endl;
 }
 
-vector<string>VolumeMenu= {"HIEN THI DANH SACH TAP TIN", "TAO PASSWORD", "THAY DOI PASSWORD", "IMPORT TAP TIN", "THOAT"};
+vector<string>VolumeMenu= {"HIEN THI DANH SACH TAP TIN", "TAO PASSWORD", "THAY DOI PASSWORD", "IMPORT TAP TIN", "TAP TIN DA XOA (THUNG RAC)","THOAT"};
 vector<string>FileMenu = {"XEM THONG TIN FILE", "TAO PASSWORD", "THAY DOI PASSWORD", "OUTPORT", "XOA", "XOA VINH VIEN", "THOAT"};
+vector<string>FileMenuRecover = { "KHOI PHUC FILE","XOA VINH VIEN","THOAT" };
 
 
 void runMenu()
@@ -708,7 +709,22 @@ X:FixConsoleColor(255);
 														system("pause");
 													}
 													else if (choose == 4) {//Xoa binh thuong
-													
+														system("cls");
+														curEntry.setStatus(1);
+														curEntry.write(VolumeList[i].getPath());
+														EntryTable entryTable = VolumeList[i].getEntryTable();
+														vector<Entry>list = entryTable.getEntryList();
+														//list[id] = curEntry;
+														list.erase(list.begin() + id);
+														entryTable.setEntryList(list);
+														vector<Entry> removeList = VolumeList[i].getEntryTable().getRemoveList();
+														removeList.push_back(curEntry);
+														entryTable.setRemoveList(removeList);
+														VolumeList[i].setEntryTable(entryTable);
+														cout << "Da xoa thanh cong!" << endl;
+														cout << "Tap tin da duoc dua vao thung rac. Xem chi tiet tai danh sach tap tin da xoa" << endl;
+														system("pause");
+														goto OPENFILE;
 													}
 													else if (choose == 5) {//Xoa vinh vien
 
@@ -909,6 +925,198 @@ X:FixConsoleColor(255);
 									//cout << MainName;
 									system("pause");
 								}
+								else if (choose == 4) {//Danh sach tap tin da xoa
+								OPENREMOVE:
+								system("cls");
+								FixConsoleColor(237);
+								cout << "------------------------------------------------DANH SACH TAP TIN DA XOA------------------------------------------------\n\n\n";
+								EntryTable RemoveList;
+								RemoveList.readEntryList(VolumeList[i].getPath());
+
+								//VolumeList[i].setNumberOfEntry(entryTable.getEntryList().size());
+								VolumeList[i].setEntryTable(RemoveList);
+								FixConsoleColor(244);
+								cout << "   Huong dan:" << endl;
+								cout << "   - Nhan ESC de quay lai" << endl;
+								cout << "   - Volume dang mo: " << VolumeList[i].getPath() << endl;
+								if (RemoveList.getRemoveList().size() <= 0) {
+									FixConsoleColor(244);
+									cout << "Chua co tap tin nao bi xoa!" << endl;
+									system("pause");
+									goto DETAILVOLUME;
+								}
+								for (int j = 0; j < RemoveList.getRemoveList().size(); j++) {
+									GoToXY(48, 12 + j * 2);
+									FixConsoleColor(237);
+									string MainName = RemoveList.getRemoveList()[j].getMainName();
+									string ExtensionName = RemoveList.getRemoveList()[j].getExtensionName();
+									while (MainName.size() > 0 && MainName.back() == ' ') MainName.pop_back();
+									while (ExtensionName.size() > 0 && ExtensionName.back() == ' ') ExtensionName.pop_back();
+									cout << MainName + "." + ExtensionName << endl;
+								}
+
+								FixConsoleColor(244);
+								for (int j = 38; j < 79; j++)
+								{
+									GoToXY(j, 12 + RemoveList.getRemoveList().size() * 2);
+									cout << ngang;
+									GoToXY(116 - j, 10);
+									cout << ngang;
+									Sleep(10);
+								}
+								GoToXY(37, 10);
+								cout << goc1;
+								GoToXY(79, 12 + RemoveList.getRemoveList().size() * 2);
+								cout << goc4;
+								for (int j = 11; j < RemoveList.getRemoveList().size() * 2 + 12 + 1; j++)
+								{
+									GoToXY(37, j);
+									cout << doc;
+									GoToXY(79, RemoveList.getRemoveList().size() * 2 + 12 + 10 - j);
+									cout << doc;
+									Sleep(10);
+								}
+								GoToXY(79, 10);
+								cout << goc2;
+								GoToXY(37, RemoveList.getRemoveList().size() * 2 + 12);
+								cout << goc3;
+								Sleep(50);
+								GoToXY(43, 12);
+								cout << ">>";
+								int line = 12;
+								do {
+									_COMMAND = toupper(_getch());
+									if (_COMMAND == 87 || _COMMAND == 72)
+									{
+										if (line >= 14)
+										{
+											GoToXY(_X, line);
+											cout << "  ";
+											MoveUp(_X, line);
+											cout << ">>";
+										}
+									}
+									else if (_COMMAND == 83 || _COMMAND == 80)
+									{
+										if (line <= 12 + RemoveList.getRemoveList().size() * 2 - 4)
+										{
+											GoToXY(_X, line);
+											cout << "  ";
+											MoveDown(_X, line);
+											cout << ">>";
+										}
+									}
+									else if (_COMMAND == 27) //Thoat
+									{
+										system("cls");
+										goto DETAILVOLUME;
+									}
+									else if (_COMMAND == 13) {//Nhấn chọn
+										int id = (line - 12) / 2;
+										Entry curEntry = VolumeList[i].getEntryTable().getRemoveList()[id];
+										system("cls");
+										FixConsoleColor(237);
+										string MainName = curEntry.getMainName();
+										string ExtensionName = curEntry.getExtensionName();
+										while (MainName.size() > 0 && MainName.back() == ' ') MainName.pop_back();
+										while (ExtensionName.size() > 0 && ExtensionName.back() == ' ') ExtensionName.pop_back();
+										cout << "----" << MainName << "." << ExtensionName << "----\n\n\n";
+										FixConsoleColor(244);
+										cout << "   Huong dan:" << endl;
+										cout << "   - Nhan ESC de quay lai" << endl;
+										cout << "   - File dang mo: " << MainName << "." << ExtensionName << endl;
+
+										for (int j = 0; j < FileMenuRecover.size(); j++) {
+											GoToXY(48, 12 + j * 2);
+											FixConsoleColor(237);
+											cout << FileMenuRecover[j];
+										}
+
+										FixConsoleColor(244);
+										for (int j = 38; j < 79; j++)
+										{
+											GoToXY(j, FileMenuRecover.size() * 2 + 12);
+											cout << ngang;
+											GoToXY(116 - j, 10);
+											cout << ngang;
+											Sleep(10);
+										}
+										GoToXY(37, 10);
+										cout << goc1;
+										GoToXY(79, FileMenuRecover.size() * 2 + 12);
+										cout << goc4;
+										for (int j = 11; j < FileMenuRecover.size() * 2 + 12 + 1; j++)
+										{
+											GoToXY(37, j);
+											cout << doc;
+											GoToXY(79, FileMenuRecover.size() * 2 + 12 + 10 - j);
+											cout << doc;
+											Sleep(10);
+										}
+										GoToXY(79, 10);
+										cout << goc2;
+										GoToXY(37, FileMenuRecover.size() * 2 + 12);
+										cout << goc3;
+										Sleep(50);
+										GoToXY(43, 12);
+										cout << ">>";
+										int line = 12;
+										do {
+											_COMMAND = toupper(_getch());
+											if (_COMMAND == 87 || _COMMAND == 72)
+											{
+												if (line >= 14)
+												{
+													GoToXY(_X, line);
+													cout << "  ";
+													MoveUp(_X, line);
+													cout << ">>";
+												}
+											}
+											else if (_COMMAND == 83 || _COMMAND == 80)
+											{
+												if (line <= FileMenuRecover.size() * 2 + 12 - 4)
+												{
+													GoToXY(_X, line);
+													cout << "  ";
+													MoveDown(_X, line);
+													cout << ">>";
+												}
+											}
+											else if (_COMMAND == 27) //Quay lai
+											{
+												system("cls");
+												goto OPENREMOVE;
+											}
+											else if (_COMMAND == 13) {//Chọn 
+												int choose = (line - 12) / 2;
+												if (choose == 0) {//Khoi phuc file
+													system("cls");
+													curEntry.setStatus(0);
+													curEntry.write(VolumeList[i].getPath());
+													vector<Entry>list = RemoveList.getEntryList();
+													vector<Entry>rlist = RemoveList.getRemoveList();
+													list.push_back(curEntry);
+													rlist.erase(rlist.begin() + id);
+													RemoveList.setEntryList(list);
+													RemoveList.setRemoveList(rlist);
+													VolumeList[i].setEntryTable(RemoveList);
+													cout << "Khoi phuc thanh cong!" << endl;
+													system("pause");
+													goto OPENREMOVE;
+												}
+												else if (choose == 1) {//Xoa vinh vien
+
+												}
+												else {//Thoat
+													goto OPENREMOVE;
+												}
+
+											}
+										} while (true);
+									}
+								} while (true);
+								} 
 								else {//Quay lai
 									goto OPENVOLUME;
 								}
