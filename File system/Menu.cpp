@@ -706,6 +706,7 @@ X:FixConsoleColor(255);
 														file.write(data, curEntry.getSize());
 														delete[] data;
 														file.close();
+														system(path.c_str());
 														system("pause");
 													}
 													else if (choose == 4) {//Xoa binh thuong
@@ -840,6 +841,7 @@ X:FixConsoleColor(255);
 										system("pause");
 										goto DETAILVOLUME;
 									}
+									temp.close();
 									Entry* e = new Entry;
 									string MainName = "", ExtensionName = "";
 									for (int i = path.size() - 1; i >= 0; i--) {
@@ -926,13 +928,13 @@ X:FixConsoleColor(255);
 										vol.write((char*)&x, 1);
 									}
 									long long start = VolumeList[i].getBeginSectorOfEntryTable() * 512;
-									vol.seekp(start);
+									vol.seekp(start, ios::beg);
 									vol.read((char*)&x, 1);
 									while (x != 0) {
-										start += 96LL;
+										start += 128LL;
 										vol.seekp(start);
 										vol.read((char*)&x, 1);
-										if (start+96 > (UINT16_MAX + 1) * 512) {
+										if (start+128 > (UINT16_MAX + 1) * 512) {
 											cout << "Volume is full!" << endl;
 											system("pause");
 											goto OPENVOLUME;
@@ -951,6 +953,10 @@ X:FixConsoleColor(255);
 									vol.write((char*)&BeginSector, 4);
 									vol.write((char*)&Size, 4);
 									vol.write(&Password[0], 64);
+									x = 0;
+									for (int k = 1; k <= 32; k++) {
+										vol.write((char*)&x, 1);
+									}
 									vol.close();
 									//cout << MainName;
 									system("pause");

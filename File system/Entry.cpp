@@ -80,7 +80,7 @@ void Entry::write(string volumePath) {
 	vol.read(&ext[0], 4);
 	while (main != this->MainName || ext != this->ExtensionName) {
 		//cout << pos << endl;
-		pos += 96LL;
+		pos += 128LL;
 		vol.seekg(pos, ios::beg);
 		vol.read(&main[0], 14);
 		vol.read(&ext[0], 4);
@@ -116,7 +116,7 @@ void Entry::clear(string volumePath) {
 	vol.read(&ext[0], 4);
 	while (main != this->MainName || ext != this->ExtensionName) {
 		//cout << pos << endl;
-		pos += 96LL;
+		pos += 128LL;
 		vol.seekg(pos, ios::beg);
 		vol.read(&main[0], 14);
 		vol.read(&ext[0], 4);
@@ -129,6 +129,6 @@ void Entry::clear(string volumePath) {
 	//cout << this->MainName << " " << this->ExtensionName << endl; system("pause");
 	vol.seekp(pos, ios::beg);
 	uint8_t x = 0;
-	for (int i=1;i<=96;i++) vol.write((char*)&x, 1);
+	for (int i=1;i<=128;i++) vol.write((char*)&x, 1);
 	vol.close();
 }

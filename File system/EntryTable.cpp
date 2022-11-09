@@ -36,11 +36,11 @@ void EntryTable::readEntryList(string volumePath) {
 	data[14] = '\0';
 	cout << data << endl;*/
 	//char* data = new char[97];
-	//file.read(data, 96);
+	//file.read(data, 128);
 	//cout << data << endl;
-	uint32_t pos = 512-96;
-	while (pos<UINT16_MAX*96+512) {
-		pos += 96;
+	uint32_t pos = 512-128;
+	while (pos<UINT16_MAX*128+512) {
+		pos += 128;
 		Entry e;
 		file.seekg(pos, ios::beg);
 		file.read(&MainName[0], 14);

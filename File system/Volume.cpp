@@ -124,10 +124,10 @@ void Volume::initEntryTable() {
 	if (cur == this->BeginSectorOfEntryTable) {
 		cout << "Entry Table Formatting. Please wait..." << endl;
 		uint8_t x = 0;
-		for (int i = 1; i <= maxNumberOfEntry * 96; i++) {
+		for (int i = 1; i <= maxNumberOfEntry * 128; i++) {
 			file.write((char*)&x, 1);
 		}
-		for (int i = maxNumberOfEntry * 96; i % 512 != 0; i++) {
+		for (int i = maxNumberOfEntry * 128; i % 512 != 0; i++) {
 			file.write((char*)&x, 1);
 		}
 	}
