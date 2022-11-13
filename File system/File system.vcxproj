@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="EncryptData.cpp" />
     <ClCompile Include="Entry.cpp" />
     <ClCompile Include="EntryTable.cpp" />
     <ClCompile Include="File.cpp" />
@@ -149,6 +150,7 @@
     <ClCompile Include="Volume.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EncryptData.h" />
     <ClInclude Include="Entry.h" />
     <ClInclude Include="EntryTable.h" />
     <ClInclude Include="File.h" />

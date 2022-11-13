@@ -12,6 +12,7 @@
 #include <sys/stat.h>
 #include <cerrno>
 #include "numeric.h"
+#include "EncryptData.h"
 using namespace std;
 
 void FixConsoleWindow() //Ham co dinh cua so
@@ -162,13 +163,14 @@ void Menu(int& _COMMAND, int& _X, int& line)
 void About()
 {
 	cout << " Truong Dai Hoc Khoa Hoc Tu Nhien DHQG - TPHCM" << endl;
-	cout << " Mon: HDH" << endl;
+	cout << " Mon: He Dieu Hanh" << endl;
 	cout << " Lop: 20_4" << endl;
-	cout << " Do an File System" << endl;
+	cout << " Do an He thong tap tin" << endl;
 	cout << " Thanh vien nhom: " << endl;
 	cout << " 1. 20120340 - Tran Nhat Nguyen" << endl;
 	cout << " 2. 20120391 - Ha Xuan Truong" << endl;
 	cout << " 3. 20120454 - Le Cong Dat" << endl;
+	cout << " Giang vien huong dan: Thai Hung Van" << endl;
 }
 
 vector<string>VolumeMenu= {"HIEN THI DANH SACH TAP TIN", "TAO PASSWORD", "THAY DOI PASSWORD", "IMPORT TAP TIN", "TAP TIN DA XOA (THUNG RAC)","THOAT"};
@@ -703,6 +705,7 @@ X:FixConsoleColor(255);
 														vol.seekg(curEntry.getBeginSector() * 512U, ios::beg);
 														vol.read(data, curEntry.getSize());
 														vol.close();
+														encryptDecrypt(data, curEntry.getSize());
 														file.write(data, curEntry.getSize());
 														delete[] data;
 														file.close();
@@ -916,10 +919,11 @@ X:FixConsoleColor(255);
 									fstream file(path, ios_base::binary | ios::in);
 									char* data = NULL;
 									file.seekg(0, ios::end);
-									long long dataSize = file.tellg();
+									uint32_t dataSize = file.tellg();
 									data = new char[dataSize];
 									file.seekg(0, ios::beg);
 									file.read(data, dataSize);
+									encryptDecrypt(data, dataSize);
 									file.close();
 									vol.write(data, dataSize);
 									delete[] data;
